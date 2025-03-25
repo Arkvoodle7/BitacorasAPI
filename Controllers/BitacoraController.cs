@@ -30,7 +30,7 @@ namespace BitacorasAPI.Controllers
         private string GetRefreshToken()
         {
             IEnumerable<string> refreshTokenValues;
-            if (Request.Headers.TryGetValues("X-Refresh-Token", out refreshTokenValues))
+            if (Request.Headers.TryGetValues("refreshToken", out refreshTokenValues))
             {
                 return refreshTokenValues.FirstOrDefault();
             }
