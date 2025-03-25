@@ -26,7 +26,7 @@ namespace BitacorasAPI.Controllers
             }
             return null;
         }
-
+        //
         private string GetRefreshToken()
         {
             IEnumerable<string> refreshTokenValues;
