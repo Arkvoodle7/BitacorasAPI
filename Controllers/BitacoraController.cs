@@ -19,13 +19,18 @@ namespace BitacorasAPI.Controllers
 
         private string GetAccessToken()
         {
-            return Request.Headers.Authorization?.Parameter;
+            IEnumerable<string> TokenValues;
+            if (Request.Headers.TryGetValues("Bearer", out TokenValues))
+            {
+                return TokenValues.FirstOrDefault();
+            }
+            return null;
         }
-
+        //
         private string GetRefreshToken()
         {
             IEnumerable<string> refreshTokenValues;
-            if (Request.Headers.TryGetValues("X-Refresh-Token", out refreshTokenValues))
+            if (Request.Headers.TryGetValues("refreshToken", out refreshTokenValues))
             {
                 return refreshTokenValues.FirstOrDefault();
             }
