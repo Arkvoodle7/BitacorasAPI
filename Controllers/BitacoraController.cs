@@ -1,4 +1,4 @@
-﻿using BitacorasAPI.Models;
+using BitacorasAPI.Models;
 using BitacorasAPI.Services;
 using MySql.Data.MySqlClient;
 using System;
@@ -19,13 +19,18 @@ namespace BitacorasAPI.Controllers
 
         private string GetAccessToken()
         {
-            return Request.Headers.Authorization?.Parameter;
+            IEnumerable<string> TokenValues;
+            if (Request.Headers.TryGetValues("Bearer", out TokenValues))
+            {
+                return TokenValues.FirstOrDefault();
+            }
+            return null;
         }
-
+        //
         private string GetRefreshToken()
         {
             IEnumerable<string> refreshTokenValues;
-            if (Request.Headers.TryGetValues("X-Refresh-Token", out refreshTokenValues))
+            if (Request.Headers.TryGetValues("refreshToken", out refreshTokenValues))
             {
                 return refreshTokenValues.FirstOrDefault();
             }
@@ -60,7 +65,7 @@ namespace BitacorasAPI.Controllers
             }
 
             //2.construir la consulta con filtros opcionales
-            var bitacoras = new List<BitacoraResponse>();
+            var bitacoras = new List<object>();
             var connectionString = ConfigurationManager.ConnectionStrings["MySqlConnection"].ConnectionString;
 
             try
@@ -70,10 +75,10 @@ namespace BitacorasAPI.Controllers
                     conn.Open();
 
                     string sql = @"
-                        SELECT id_bitacora, fecha_bitacora, id_usuario, descripcion
-                        FROM bitacoras
-                        WHERE 1=1
-                    ";
+                SELECT id_bitacora, fecha_bitacora, id_usuario, descripcion
+                FROM bitacoras
+                WHERE 1=1
+            ";
 
                     var parameters = new List<MySqlParameter>();
 
@@ -100,13 +105,13 @@ namespace BitacorasAPI.Controllers
                         {
                             while (reader.Read())
                             {
-                                bitacoras.Add(new BitacoraResponse
+                                var bitacora = new
                                 {
-                                    IdBitacora = reader.GetInt32("id_bitacora"),
                                     FechaBitacora = reader.GetDateTime("fecha_bitacora"),
                                     IdUsuario = reader.GetInt32("id_usuario"),
                                     Descripcion = reader.GetString("descripcion")
-                                });
+                                };
+                                bitacoras.Add(bitacora);
                             }
                         }
                     }
