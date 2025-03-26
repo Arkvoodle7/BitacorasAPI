@@ -60,7 +60,7 @@ namespace BitacorasAPI.Controllers
             }
 
             //2.construir la consulta con filtros opcionales
-            var bitacoras = new List<object>();  // Cambio aquí a 'object' para no incluir el IdBitacora
+            var bitacoras = new List<object>();
             var connectionString = ConfigurationManager.ConnectionStrings["MySqlConnection"].ConnectionString;
 
             try
@@ -112,20 +112,10 @@ namespace BitacorasAPI.Controllers
                     }
                 }
 
-                //si no se encontraron bitacoras, devolver mensaje
-                if (bitacoras.Count == 0)
-                {
-                    var responseMessage = new { Mensaje = "No hay bitácoras para mostrar." };
-                    var response = Request.CreateResponse(HttpStatusCode.OK, responseMessage);
-                    response.Headers.Add("X-New-Access-Token", accessToken);
-                    response.Headers.Add("X-New-Refresh-Token", refreshToken);
-                    return ResponseMessage(response);
-                }
-
-                var responseWithBitacoras = Request.CreateResponse(HttpStatusCode.OK, bitacoras);
-                responseWithBitacoras.Headers.Add("X-New-Access-Token", accessToken);
-                responseWithBitacoras.Headers.Add("X-New-Refresh-Token", refreshToken);
-                return ResponseMessage(responseWithBitacoras);
+                var response = Request.CreateResponse(HttpStatusCode.OK, bitacoras);
+                response.Headers.Add("X-New-Access-Token", accessToken);
+                response.Headers.Add("X-New-Refresh-Token", refreshToken);
+                return ResponseMessage(response);
             }
             catch (Exception ex)
             {
